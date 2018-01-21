@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/find_city_drawer"
+        android:title="@string/find_city"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/last_cities_drawer"
+        android:title="@string/last_cities"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/share_drawer"
+        android:title="@string/share"
+        app:showAsAction="never" />
+
+</menu>

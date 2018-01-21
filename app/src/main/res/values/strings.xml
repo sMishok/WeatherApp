@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="label">Weather forecast</string>
+    <string name="find_btn">Find weather</string>
+    <string name="share_with_friend_btn">Share with friend</string>
+    <string name="chooser_title">Choose an app</string>
+    <string name="pressure">Pressure</string>
+    <string name="humidity">Humidity</string>
+    <string name="winds">Winds</string>
+    <string name="details">Details:</string>
+    <string name="open_weather_maps_api_id">192d773d7b8e762a18b8960246199be5</string>
+    <string name="find_city">Find city</string>
+    <string name="last_cities">Last cities</string>
+    <string name="place_not_found">Place not found</string>
+    <string name="share">Share</string>
+    <string name="delete">Delete</string>
+    <string name="open_popup">Menu</string>
+
+    <string name="weather_sunny">&#xf113;</string>
+    <string name="weather_clear_night">&#xf10d;</string>
+    <string name="weather_thunder">&#xf114;</string>
+    <string name="weather_drizzle">&#xf10a;</string>
+    <string name="weather_rainy">&#xf107;</string>
+    <string name="weather_snowy">&#xf10b;</string>
+    <string name="weather_foggy">&#xf108;</string>
+    <string name="weather_cloudy">&#xf106;</string>
+    <string name="communicate">Communicate</string>
+    <string name="email">info@onetome.ru</string>
+    <string name="navigation_drawer_open">Open drawer</string>
+    <string name="navigation_drawer_close">Close drawer</string>
+    <string name="about">About</string>
+    <string name="temp_text">Съешь же ещё этих мягких французских булок, да выпей чаю.</string>
+    <string name="about_developer">About developer</string>
+
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#0d23e7</color>
+    <color name="colorBackground">#81d3f9</color>
+    <color name="colorFButtonBackground">#000000</color>
+    <color name="colorDrawerHeader">#ffffff</color>
+
+</resources>
