@@ -18,8 +18,9 @@ public class StorageManager {
     private static final String STORAGE_NAME = "StorageName";
     private static final String ICONNAME = "icon.png";
     private static final String KEY = "key";
-    private static final String MOSCOW = "Moscow";
+    private static final String MOSCOW = "PRVFRZ";
     private static final String TAG = "StorageManager";
+    private static final int OFFSET = 3;
     private SharedPreferences sharedPreferences = null;
 
 
@@ -29,11 +30,22 @@ public class StorageManager {
     }
 
     public String getCity() {
-        return sharedPreferences.getString(KEY, MOSCOW);
+        String tmp = sharedPreferences.getString(KEY, MOSCOW);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < tmp.length(); i++) {
+            sb.append((char) (tmp.charAt(i) - OFFSET));
+            Log.i(TAG, sb.toString());
+        }
+        return sb.toString();
     }
 
     public void setCity(String city) {
-        sharedPreferences.edit().putString(KEY, city).apply();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < city.length(); i++) {
+            sb.append((char) (city.charAt(i) + OFFSET));
+            Log.i(TAG, sb.toString());
+        }
+        sharedPreferences.edit().putString(KEY, sb.toString()).apply();
     }
 
     public void saveIconPrivate(Context context) {
