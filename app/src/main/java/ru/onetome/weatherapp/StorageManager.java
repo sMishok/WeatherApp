@@ -25,6 +25,7 @@ public class StorageManager {
 
     public StorageManager(Context context) {
         sharedPreferences = context.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
+        saveIconPublic(context);
     }
 
     public String getCity() {
@@ -61,11 +62,13 @@ public class StorageManager {
 
     public Bitmap loadIconPrivate(Context context) {
         File file = new File(context.getFilesDir(), ICONNAME);
+        Log.i(TAG, "file path is loaded: " + file.getAbsolutePath());
         return onLoadIcon(context, file);
     }
 
     public Bitmap loadIconPublic(Context context) {
-        File file = new File(context.getFilesDir(), ICONNAME);
+        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), ICONNAME);
+        Log.i(TAG, "file path is loaded: " + file.getAbsolutePath());
         return onLoadIcon(context, file);
     }
 
@@ -76,21 +79,16 @@ public class StorageManager {
             return;
         }
         if (context.getResources().getDrawable(R.drawable.homer) != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        FileOutputStream outputStream = new FileOutputStream(file, false);
-                        Bitmap bitmap = ((BitmapDrawable) context.getResources().getDrawable(R.drawable.homer)).getBitmap();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                        outputStream.flush();
-                        outputStream.close();
-                        Log.i(TAG, "file is saved: " + file.getAbsolutePath());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+            try {
+                FileOutputStream outputStream = new FileOutputStream(file, false);
+                Bitmap bitmap = ((BitmapDrawable) context.getResources().getDrawable(R.drawable.homer)).getBitmap();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 80, outputStream);
+                outputStream.flush();
+                outputStream.close();
+                Log.i(TAG, "file is saved: " + file.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -101,11 +99,12 @@ public class StorageManager {
             Log.i(TAG, "External storage not found (load)");
             return null;
         }
+        if (!file.exists()) {
+            Log.i(TAG, "Icon not found");
+            return null;
+        }
         try {
-            if (!file.exists()) {
-                Log.i(TAG, "Icon not found");
-                return null;
-            }
+
             BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
             icon = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
@@ -131,9 +130,6 @@ public class StorageManager {
     }
 
 }
-
-
-
 
 
 //    ____________________________________________________

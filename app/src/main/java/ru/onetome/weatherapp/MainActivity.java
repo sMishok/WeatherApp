@@ -73,11 +73,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         View headerLayout = navigationView.getHeaderView(0);
         headerImage = headerLayout.findViewById(R.id.header_imageView);
-        storageManager.saveIconPublic(this);
-        Bitmap bitmap;
-        if ((bitmap = storageManager.loadIconPublic(this)) != null)
-            headerImage.setImageBitmap(bitmap);
-        else headerImage.setImageResource(R.drawable.homer);
+        Bitmap bitmap = storageManager.loadIconPublic(this);
+        headerImage.setImageBitmap(bitmap);
 
         if (savedInstanceState != null) {
             Log.i(TAG, "Recovery instance state");
@@ -87,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             transaction.add(R.id.fragment_container, infoFragment, INFO_FRAGMENT_TAG);
             transaction.commit();
         }
+
     }
 
     @Override

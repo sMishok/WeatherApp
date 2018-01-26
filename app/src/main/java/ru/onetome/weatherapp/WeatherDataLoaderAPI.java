@@ -10,11 +10,7 @@ public class WeatherDataLoaderAPI {
 
     private static final String OPEN_WEATHER_MAP_API = "https://api.openweathermap.org/data/2.5/";
     private static final String OPEN_WEATHER_MAP_API_ID = "192d773d7b8e762a18b8960246199be5";
-    //    private static final String KEY = "x-api-key";
-//    private static final String RESPONSE = "cod";
-//    private static final String NEW_LINE = "\n";
     private static final String UNITS = "metric";
-    //    private static final int SERVER_MESSAGE = 200;
     private static final String WDLTag = "WeatherDataLoader";
     private static Retrofit retrofit = null;
 
