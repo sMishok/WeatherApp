@@ -39,8 +39,7 @@ public class CitiesListFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         citiesRecyclerView.setLayoutManager(layoutManager);
         citiesRecyclerView.setAdapter(new MyAdapter());
-        if (savedInstanceState != null) {
-        } else {
+        if (savedInstanceState == null) {
             cities = activity.getCities();
         }
         return listView;

@@ -55,6 +55,10 @@ public class WeatherMap {
         return weather.get(0).icon;
     }
 
+    public String getIconUrl() {
+        return "http://openweathermap.org/img/w/" + weather.get(0).icon + ".png";
+    }
+
     public String getBase() {
         return base;
     }

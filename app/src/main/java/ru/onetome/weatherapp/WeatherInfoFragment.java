@@ -3,40 +3,48 @@ package ru.onetome.weatherapp;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
+import com.bumptech.glide.Glide;
 
-import org.json.JSONObject;
-
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class WeatherInfoFragment extends Fragment {
 
     private static final String WIF_TAG = "WeatherInfoFragment";
-    private final Handler handler = new Handler();
+    //    @BindView(R.id.weather_icon) TextView weatherIcon;
+    @BindView(R.id.weather_image_icon)
+    ImageView weatherImageIcon;
+    @BindView(R.id.city)
+    TextView cityText;
+    @BindView(R.id.weather_temp)
+    TextView tempText;
+    @BindView(R.id.weather_info_text)
+    TextView weatherInfoText;
+    @BindView(R.id.weather_details_text)
+    TextView weatherDetailsText;
     private MainActivity activity;
+    //    private final Handler handler = new Handler();
+    private WeatherDataLoaderAPI.WeatherAPI api;
     private Typeface weatherFont;
-    private TextView weatherIcon;
-    private TextView cityText;
-    private TextView weatherInfoText;
-    private TextView weatherDetailsText;
-
-
     private String weatherInfo;
+    private String weatherTemp;
     private String cityName;
     private String weatherDetails;
-    private String updateOn;
     private String icon;
 
     @Override
@@ -49,58 +57,52 @@ public class WeatherInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View infoView = inflater.inflate(R.layout.fragment_weather_info, container, false);
-        weatherIcon = infoView.findViewById(R.id.weather_icon);
-        weatherIcon.setTypeface(weatherFont);
-        cityText = infoView.findViewById(R.id.city);
-        weatherInfoText = infoView.findViewById(R.id.weather_info_text);
-        weatherDetailsText = infoView.findViewById(R.id.weather_details_text);
-
-        if (savedInstanceState != null) {
-            Log.i(WIF_TAG, "Recovery instance state");
-        } else {
+        ButterKnife.bind(this, infoView);
+//        weatherIcon.setTypeface(weatherFont);
+        if (savedInstanceState == null) {
             changeCity(activity.storageManager.getCity());
         }
         return infoView;
     }
 
     private void updateWeatherData(final String city) {
-        new Thread() {
-            public void run() {
-                final JSONObject jsonObject = WeatherDataLoader.getJSONData(activity, city);
-                if (jsonObject == null) {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            Toast.makeText(activity, activity.getString(R.string.place_not_found),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } else {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            renderWeather(jsonObject);
-                        }
-                    });
-                }
+        api = WeatherDataLoaderAPI.getClient().create(WeatherDataLoaderAPI.WeatherAPI.class);
+        Call<WeatherMap> callWeather = api.getWeather(city, WeatherDataLoaderAPI.getUNITS(), WeatherDataLoaderAPI.getOpenWeatherMapApiId());
+        callWeather.enqueue(new Callback<WeatherMap>() {
+            @Override
+            public void onResponse(Call<WeatherMap> call, Response<WeatherMap> response) {
+                if (response.isSuccessful()) {
+                    WeatherMap weatherMap = response.body();
+                    Log.d(WIF_TAG, "onResponse: " + response.toString());
+                    renderWeather(weatherMap);
+                } else
+                    Log.e(WIF_TAG, "Response is not receive");
             }
-        }.start();
+
+            @Override
+            public void onFailure(Call<WeatherMap> call, Throwable t) {
+                Log.e(WIF_TAG, "onFailure: " + t.toString());
+            }
+        });
     }
 
-    private void renderWeather(JSONObject jsonObject) {
-        Log.d(WIF_TAG, "jspn " + jsonObject.toString());
+    public void renderWeather(WeatherMap map) {
         try {
-            WeatherMap map = new Gson().fromJson(jsonObject.toString(), WeatherMap.class);
             cityName = map.getName().toUpperCase(Locale.US);
             cityText.setText(cityName);
-            weatherInfo = map.getWeatherDescription().toUpperCase(Locale.US) + ", " + map.getMainTemp() + " °C";
+            weatherTemp = map.getMainTemp() + " °C";
+            tempText.setText(weatherTemp);
+            weatherInfo = map.getWeatherDescription().toUpperCase(Locale.US);
             weatherInfoText.setText(weatherInfo);
             weatherDetails = "Humidity: " + map.getMainHumidity() + "%" + "\n"
                     + "Pressure: " + map.getMainPressure() + " hPa" + "\n"
                     + "Wind: " + map.getWindSpeed() + " mps";
             weatherDetailsText.setText(weatherDetails);
-            DateFormat df = DateFormat.getDateTimeInstance();
-            updateOn = df.format(new Date(jsonObject.getLong("dt") * 1000));
+            Glide.with(activity).load(map.getIconUrl()).into(weatherImageIcon);
 
-            setWeatherIcon(map.getWeatherId(), map.getSysSunrise() * 1000, map.getSysSunset() * 1000);
+
+//            DateFormat df = DateFormat.getDateTimeInstance();
+//            setWeatherIcon( map.getWeatherId(), map.getSysSunrise() * 1000, map.getSysSunset() * 1000);
         } catch (Exception e) {
             Log.d(WIF_TAG, "fields data not found in json");
         }
@@ -119,7 +121,7 @@ public class WeatherInfoFragment extends Fragment {
                 icon = activity.getString(R.string.weather_clear_night);
             }
         } else {
-            Log.d(WIF_TAG, "id " + id);
+            Log.d(WIF_TAG, "id: " + id);
             switch (id) {
                 case 2:
                     icon = activity.getString(R.string.weather_thunder);
@@ -141,10 +143,11 @@ public class WeatherInfoFragment extends Fragment {
                     break;
             }
         }
-        weatherIcon.setText(icon);
+//        weatherIcon.setText(icon);
     }
 
     public void changeCity(String city) {
+        Log.i(WIF_TAG, "changeCity: " + city.toString());
         updateWeatherData(city);
     }
 

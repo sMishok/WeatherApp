@@ -5,6 +5,7 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/standart_margin"
     android:paddingLeft="@dimen/standart_margin"
     android:paddingRight="@dimen/standart_margin"

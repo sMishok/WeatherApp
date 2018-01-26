@@ -30,7 +30,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.i(DBMANAGER_TAG, "DBManager OnCreate started");
         db.execSQL("CREATE TABLE LAST_CITIES (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "CITY TEXT);");
+                + "CITY TEXT UNIQUE);");
 
         Log.i(DBMANAGER_TAG, "База создана");
     }
@@ -41,9 +41,14 @@ public class DataBaseManager extends SQLiteOpenHelper {
     }
 
     public void insertCity(SQLiteDatabase db, String city) {
-        ContentValues cityValues = new ContentValues();
-        cityValues.put("CITY", city);
-        db.insert("LAST_CITIES", null, cityValues);
+
+        try {
+            ContentValues cityValues = new ContentValues();
+            cityValues.put("CITY", city);
+            db.insertOrThrow("LAST_CITIES", null, cityValues);
+        } catch (SQLiteException e) {
+            Log.i(DBMANAGER_TAG, city.toString() + " registered in the database");
+        }
     }
 
     public List<String> getCities() {
@@ -63,8 +68,4 @@ public class DataBaseManager extends SQLiteOpenHelper {
         }
         return cities;
     }
-
-//    public SQLiteDatabase getDatabase() {
-//        return database;
-//    }
 }

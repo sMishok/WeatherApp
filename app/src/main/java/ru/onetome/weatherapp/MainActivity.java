@@ -2,6 +2,7 @@ package ru.onetome.weatherapp;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 
 import java.util.List;
@@ -29,11 +31,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String KEY_CITY_CHOICE = "key_city_choice";
     private static final String INFO_FRAGMENT_TAG = "weather_details_fragment";
     private static final String FIND_CITY_FRAGMENT_TAG = "find_city_fragment";
-
+    private static final String ICONNAME = "icon.png";
     public StorageManager storageManager;
     public DataBaseManager dbManager;
     public SQLiteDatabase database;
     private String cityName;
+    private ImageView headerImage;
 
     public List<String> getCities() {
         return dbManager.getCities();
@@ -68,6 +71,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 showInputDialog();
             }
         });
+        View headerLayout = navigationView.getHeaderView(0);
+        headerImage = headerLayout.findViewById(R.id.header_imageView);
+        storageManager.saveIconPublic(this);
+        Bitmap bitmap;
+        if ((bitmap = storageManager.loadIconPublic(this)) != null)
+            headerImage.setImageBitmap(bitmap);
+        else headerImage.setImageResource(R.drawable.homer);
 
         if (savedInstanceState != null) {
             Log.i(TAG, "Recovery instance state");
@@ -161,10 +171,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void setWeatherInfoFragment() {
         storageManager.setCity(cityName);
-        WeatherInfoFragment infoFragment = new WeatherInfoFragment();
+        WeatherInfoFragment infoFragment = (WeatherInfoFragment) getSupportFragmentManager().findFragmentByTag(INFO_FRAGMENT_TAG);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         infoFragment.changeCity(cityName);
-        transaction.replace(R.id.fragment_container, infoFragment, INFO_FRAGMENT_TAG);
+        transaction.replace(R.id.fragment_container, infoFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
