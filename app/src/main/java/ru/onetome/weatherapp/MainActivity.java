@@ -73,9 +73,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         View headerLayout = navigationView.getHeaderView(0);
         headerImage = headerLayout.findViewById(R.id.header_imageView);
-        Bitmap bitmap = storageManager.loadIconPublic(this);
-        headerImage.setImageBitmap(bitmap);
-
+        Bitmap bitmap;
+        if ((bitmap = storageManager.loadIconPublic(this)) != null) {
+            headerImage.setImageBitmap(bitmap);
+        } else {
+            headerImage.setImageResource(R.drawable.homer);
+        }
         if (savedInstanceState != null) {
             Log.i(TAG, "Recovery instance state");
         } else {
