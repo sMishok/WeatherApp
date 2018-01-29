@@ -3,6 +3,7 @@ package ru.onetome.weatherapp;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -60,14 +61,14 @@ public class WeatherInfoFragment extends Fragment {
         ButterKnife.bind(this, infoView);
 //        weatherIcon.setTypeface(weatherFont);
         if (savedInstanceState == null) {
-            changeCity(activity.storageManager.getCity());
+//            changeCity(activity.storageManager.getCity());
         }
         return infoView;
     }
 
-    private void updateWeatherData(final String city) {
+    private void updateWeatherData(final int cityID) {
         api = WeatherDataLoaderAPI.getClient().create(WeatherDataLoaderAPI.WeatherAPI.class);
-        Call<WeatherMap> callWeather = api.getWeather(city, WeatherDataLoaderAPI.getUNITS(), WeatherDataLoaderAPI.getOpenWeatherMapApiId());
+        Call<WeatherMap> callWeather = api.getWeather(cityID, WeatherDataLoaderAPI.getUNITS(), WeatherDataLoaderAPI.getOpenWeatherMapApiId());
         callWeather.enqueue(new Callback<WeatherMap>() {
             @Override
             public void onResponse(Call<WeatherMap> call, Response<WeatherMap> response) {
@@ -75,6 +76,7 @@ public class WeatherInfoFragment extends Fragment {
                     WeatherMap weatherMap = response.body();
                     Log.d(WIF_TAG, "onResponse: " + response.toString());
                     renderWeather(weatherMap);
+                    activity.dbManager.insertLastCity(weatherMap);
                 } else
                     Log.e(WIF_TAG, "Response is not receive");
             }
@@ -146,9 +148,9 @@ public class WeatherInfoFragment extends Fragment {
 //        weatherIcon.setText(icon);
     }
 
-    public void changeCity(String city) {
-        Log.i(WIF_TAG, "changeCity: " + city.toString());
-        updateWeatherData(city);
+    public void changeCity(int cityID) {
+        Log.i(WIF_TAG, "changeCity: " + cityID);
+        updateWeatherData(cityID);
     }
 
     public String getWeatherInfo() {
@@ -158,7 +160,7 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
     }
 }

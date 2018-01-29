@@ -31,19 +31,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String KEY_CITY_CHOICE = "key_city_choice";
     private static final String INFO_FRAGMENT_TAG = "weather_details_fragment";
     private static final String FIND_CITY_FRAGMENT_TAG = "find_city_fragment";
-    private static final String ICONNAME = "icon.png";
+    //    private static final String ICONNAME = "icon.png";
     public StorageManager storageManager;
     public DataBaseManager dbManager;
     public SQLiteDatabase database;
     private String cityName;
-    private ImageView headerImage;
+    private int cityID;
+//    private ImageView headerImage;
 
-    public List<String> getCities() {
-        return dbManager.getCities();
+    public List<WeatherMap> getLastCities() {
+        return dbManager.getLastCities();
     }
 
     public void setCity(String city) {
         cityName = city;
+        cityID = dbManager.getCityID(city);
         Log.i(TAG, "city: " + city);
     }
 
@@ -52,8 +54,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         storageManager = new StorageManager(MainActivity.this);
+        storageManager.getCitiesList();
         dbManager = new DataBaseManager(this);
-        database = dbManager.getWritableDatabase();
+//        database = dbManager.getWritableDatabase();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -72,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         View headerLayout = navigationView.getHeaderView(0);
-        headerImage = headerLayout.findViewById(R.id.header_imageView);
+        ImageView headerImage = headerLayout.findViewById(R.id.header_imageView);
         Bitmap bitmap;
         if ((bitmap = storageManager.loadIconPublic(this)) != null) {
             headerImage.setImageBitmap(bitmap);
@@ -85,9 +88,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             WeatherInfoFragment infoFragment = new WeatherInfoFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fragment_container, infoFragment, INFO_FRAGMENT_TAG);
+            transaction.addToBackStack(null);
             transaction.commit();
         }
-
     }
 
     @Override
@@ -174,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         storageManager.setCity(cityName);
         WeatherInfoFragment infoFragment = (WeatherInfoFragment) getSupportFragmentManager().findFragmentByTag(INFO_FRAGMENT_TAG);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        infoFragment.changeCity(cityName);
+        infoFragment.changeCity(cityID);
         transaction.replace(R.id.fragment_container, infoFragment);
         transaction.addToBackStack(null);
         transaction.commit();

@@ -2,6 +2,7 @@ package ru.onetome.weatherapp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,8 +17,9 @@ import java.util.List;
 public class CitiesListFragment extends Fragment {
 
     private MainActivity activity;
+
     //    private CitiesListListener citiesListListener;
-    private List<String> cities;
+    private List<WeatherMap> cities;
 
     @Override
     public void onAttach(Context context) {
@@ -32,7 +34,7 @@ public class CitiesListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View listView = inflater.inflate(R.layout.fragment_cities_list, container, false);
         RecyclerView citiesRecyclerView = listView.findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -40,7 +42,7 @@ public class CitiesListFragment extends Fragment {
         citiesRecyclerView.setLayoutManager(layoutManager);
         citiesRecyclerView.setAdapter(new MyAdapter());
         if (savedInstanceState == null) {
-            cities = activity.getCities();
+            cities = activity.getLastCities();
         }
         return listView;
     }
@@ -49,22 +51,30 @@ public class CitiesListFragment extends Fragment {
     private class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView categoryNameTextView;
+        private TextView categoryTempTextView;
+        private TextView categoryDescriptionTextView;
 
 
         MyViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.category_list_item, parent, false));
             itemView.setOnClickListener(this);
-            categoryNameTextView = (TextView) itemView.findViewById(R.id.category_name_text_view);
+            categoryNameTextView = itemView.findViewById(R.id.category_name_text_view);
+            categoryTempTextView = itemView.findViewById(R.id.category_temp_text_view);
+            categoryDescriptionTextView = itemView.findViewById(R.id.category_description_text_view);
         }
 
         void bind(int position) {
-            String category = cities.get(position);
+            String category = cities.get(position).getName();
+            String temp = cities.get(position).getMainTemp().toString();
+            String description = cities.get(position).getWeatherDescription();
             categoryNameTextView.setText(category);
+            categoryTempTextView.setText(temp);
+            categoryDescriptionTextView.setText(description);
         }
 
         @Override
         public void onClick(View view) {
-            activity.setCity(cities.get(this.getLayoutPosition()));
+            activity.setCity(cities.get(this.getLayoutPosition()).getName());
             activity.setWeatherInfoFragment();
 //            showWeatherInfoFragment(this.getLayoutPosition());
         }

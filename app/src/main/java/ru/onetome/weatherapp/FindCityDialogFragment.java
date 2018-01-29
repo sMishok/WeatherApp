@@ -27,7 +27,6 @@ public class FindCityDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 String city = input.getText().toString().toUpperCase();
                 activity.setCity(city);
-                activity.dbManager.insertCity(activity.database, city);
                 activity.setWeatherInfoFragment();
             }
         });

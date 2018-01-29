@@ -32,7 +32,7 @@ public class WeatherDataLoaderAPI {
 
     interface WeatherAPI {
         @GET("weather")
-        Call<WeatherMap> getWeather(@Query("q") String city,
+        Call<WeatherMap> getWeather(@Query("id") int cityID,
                                     @Query("units") String units,
                                     @Query("appid") String id);
     }

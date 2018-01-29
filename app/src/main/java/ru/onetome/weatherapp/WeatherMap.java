@@ -2,6 +2,7 @@ package ru.onetome.weatherapp;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WeatherMap {
@@ -30,6 +31,14 @@ public class WeatherMap {
     String name;
     @SerializedName("cod")
     String cod;
+
+    public WeatherMap(String name, int id, float temp, String description) {
+        this.name = name;
+        this.id = id;
+        main = new MainElement(temp);
+        weather = new ArrayList<>();
+        weather.add(new WeatherElement(description));
+    }
 
     public Float getLon() {
         return coordinate.lon;
@@ -158,6 +167,10 @@ public class WeatherMap {
 
         @SerializedName("icon")
         String icon;
+
+        public WeatherElement(String description) {
+            this.description = description;
+        }
     }
 
     private class MainElement {
@@ -171,6 +184,10 @@ public class WeatherMap {
         Float temp_min;
         @SerializedName("temp_max")
         Float temp_max;
+
+        public MainElement(Float temp) {
+            this.temp = temp;
+        }
     }
 
     private class WindElement {

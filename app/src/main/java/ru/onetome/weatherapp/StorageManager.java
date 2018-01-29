@@ -8,35 +8,50 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StorageManager {
     private static final String STORAGE_NAME = "StorageName";
     private static final String ICONNAME = "icon.png";
     private static final String KEY = "key";
-    private static final String MOSCOW = "PRVFRZ";
+    //    private static final String MOSCOW = "PRVFRZ";
+    private static final String MOSCOW = "null";
     private static final String TAG = "StorageManager";
     private static final int OFFSET = 3;
     private SharedPreferences sharedPreferences = null;
+    private MainActivity activity;
+    private City[] cities;
 
 
     public StorageManager(Context context) {
         sharedPreferences = context.getSharedPreferences(STORAGE_NAME, Context.MODE_PRIVATE);
         saveIconPublic(context);
+        activity = (MainActivity) context;
     }
 
-    public String getCity() {
+    public int getCity() {
         String tmp = sharedPreferences.getString(KEY, MOSCOW);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < tmp.length(); i++) {
             sb.append((char) (tmp.charAt(i) - OFFSET));
             Log.i(TAG, sb.toString());
         }
-        return sb.toString();
+        int cityID = activity.dbManager.getCityID(sb.toString());
+        return cityID;
     }
 
     public void setCity(String city) {
@@ -46,6 +61,37 @@ public class StorageManager {
             Log.i(TAG, sb.toString());
         }
         sharedPreferences.edit().putString(KEY, sb.toString()).apply();
+    }
+
+    public void getCitiesList() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    InputStream is = activity.getAssets().open("cities_list/city.list.json");
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder sb = new StringBuilder(1024);
+                    String tempData;
+                    while ((tempData = reader.readLine()) != null) {
+                        sb.append(tempData).append("\n");
+                    }
+                    reader.close();
+                    is.close();
+                    JSONArray jsonArray = new JSONArray(sb.toString());
+                    List<City> citiesList = new ArrayList<>();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject json = jsonArray.getJSONObject(i);
+                        City city = new Gson().fromJson(json.toString(), City.class);
+                        citiesList.add(city);
+                    }
+                    City[] cities = citiesList.toArray(new City[citiesList.size()]);
+                    activity.dbManager.insertCities(cities);
+                    Log.i(TAG, "Cities" + cities.length);
+                } catch (Exception e) {
+                    Log.i(TAG, "City.list.json read problem" + e.toString());
+                }
+            }
+        }).start();
     }
 
     public void saveIconPrivate(Context context) {
@@ -68,8 +114,10 @@ public class StorageManager {
     public void saveIconPublic(Context context) {
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), ICONNAME);
         Log.i(TAG, "file path is created: " + file.getAbsolutePath());
-
-        onSaveIcon(context, file);
+        if (!file.exists()) {
+            Log.i(TAG, "file isn`t exist");
+            onSaveIcon(context, file);
+        }
     }
 
     public Bitmap loadIconPrivate(Context context) {
@@ -102,7 +150,6 @@ public class StorageManager {
                 e.printStackTrace();
             }
         }
-
     }
 
     private Bitmap onLoadIcon(Context context, File file) {
@@ -127,7 +174,6 @@ public class StorageManager {
         return icon;
     }
 
-
     private boolean isExternalStorageWritable(Context context) {
         String state = Environment.getExternalStorageState();
         Log.i(TAG, "ExternalStorageWritable: " + state);
@@ -140,6 +186,7 @@ public class StorageManager {
         return Environment.MEDIA_MOUNTED.equals(state) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
+
 
 }
 
