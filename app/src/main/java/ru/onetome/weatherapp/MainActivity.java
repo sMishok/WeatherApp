@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void setWeatherInfoFragment() {
-        storageManager.setCity(cityName);
+        storageManager.setCity(cityID);
         WeatherInfoFragment infoFragment = (WeatherInfoFragment) getSupportFragmentManager().findFragmentByTag(INFO_FRAGMENT_TAG);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         infoFragment.changeCity(cityID);

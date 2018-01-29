@@ -61,7 +61,7 @@ public class WeatherInfoFragment extends Fragment {
         ButterKnife.bind(this, infoView);
 //        weatherIcon.setTypeface(weatherFont);
         if (savedInstanceState == null) {
-//            changeCity(activity.storageManager.getCity());
+            changeCity(activity.storageManager.getCity());
         }
         return infoView;
     }

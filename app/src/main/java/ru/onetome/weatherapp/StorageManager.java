@@ -29,9 +29,9 @@ public class StorageManager {
     private static final String ICONNAME = "icon.png";
     private static final String KEY = "key";
     //    private static final String MOSCOW = "PRVFRZ";
-    private static final String MOSCOW = "null";
+    private static final int MOSCOW = 524901;
     private static final String TAG = "StorageManager";
-    private static final int OFFSET = 3;
+//    private static final int OFFSET = 3;
     private SharedPreferences sharedPreferences = null;
     private MainActivity activity;
     private City[] cities;
@@ -44,23 +44,23 @@ public class StorageManager {
     }
 
     public int getCity() {
-        String tmp = sharedPreferences.getString(KEY, MOSCOW);
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < tmp.length(); i++) {
-            sb.append((char) (tmp.charAt(i) - OFFSET));
-            Log.i(TAG, sb.toString());
-        }
-        int cityID = activity.dbManager.getCityID(sb.toString());
-        return cityID;
+//        String tmp = sharedPreferences.getString(KEY, MOSCOW);
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < tmp.length(); i++) {
+//            sb.append((char) (tmp.charAt(i) - OFFSET));
+//            Log.i(TAG, sb.toString());
+//        }
+//        int cityID = activity.dbManager.getCityID(sb.toString());
+        return sharedPreferences.getInt(KEY, MOSCOW);
     }
 
-    public void setCity(String city) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < city.length(); i++) {
-            sb.append((char) (city.charAt(i) + OFFSET));
-            Log.i(TAG, sb.toString());
-        }
-        sharedPreferences.edit().putString(KEY, sb.toString()).apply();
+    public void setCity(int cityID) {
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < city.length(); i++) {
+//            sb.append((char) (city.charAt(i) + OFFSET));
+//            Log.i(TAG, sb.toString());
+//        }
+        sharedPreferences.edit().putInt(KEY, cityID).apply();
     }
 
     public void getCitiesList() {
