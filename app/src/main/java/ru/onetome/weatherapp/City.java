@@ -13,10 +13,11 @@ public class City {
     CityCoordinate coordinate;
 
 
-    public City(String cityName, Integer cityID, String cityCountry) {
+    public City(String cityName, Integer cityID, String cityCountry, Float lon, Float lat) {
         this.cityID = cityID;
         this.cityName = cityName;
         this.cityCountry = cityCountry;
+        coordinate = new CityCoordinate(lon, lat);
     }
 
     public Integer getCityID() {
@@ -44,5 +45,10 @@ public class City {
         Float lon;
         @SerializedName("lat")
         Float lat;
+
+        public CityCoordinate(Float lon, Float lat) {
+            this.lon = lon;
+            this.lat = lat;
+        }
     }
 }
