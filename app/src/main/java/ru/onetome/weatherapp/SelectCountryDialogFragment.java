@@ -40,7 +40,7 @@ public class SelectCountryDialogFragment extends DialogFragment {
         this.cities = cities;
         countries = new CharSequence[cities.size()];
         for (int i = 0; i < countries.length; i++) {
-            countries[i] = "Country: " + cities.get(i).cityCountry + " City coordinates: ("
+            countries[i] = "Country: " + cities.get(i).cityCountry + "\nCity coordinates: ("
                     + cities.get(i).getCityLat().toString() + "°, " + cities.get(i).getCityLon().toString() + "°)";
         }
     }
