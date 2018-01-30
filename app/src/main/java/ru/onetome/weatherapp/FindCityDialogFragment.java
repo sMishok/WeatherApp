@@ -12,6 +12,7 @@ import android.widget.EditText;
 public class FindCityDialogFragment extends DialogFragment {
     private static final String POSITIVE_BUTTON_TEXT = "Search";
     private MainActivity activity;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -27,7 +28,6 @@ public class FindCityDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 String city = input.getText().toString().toUpperCase();
                 activity.setCity(city);
-                activity.setWeatherInfoFragment();
             }
         });
         return builder.create();

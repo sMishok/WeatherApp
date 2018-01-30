@@ -39,24 +39,22 @@ public class WeatherInfoFragment extends Fragment {
     @BindView(R.id.weather_details_text)
     TextView weatherDetailsText;
     private MainActivity activity;
-    //    private final Handler handler = new Handler();
-    private WeatherDataLoaderAPI.WeatherAPI api;
     private Typeface weatherFont;
     private String weatherInfo;
-    private String weatherTemp;
     private String cityName;
-    private String weatherDetails;
     private String icon;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = (MainActivity) getActivity();
-        weatherFont = Typeface.createFromAsset(activity.getAssets(), "fonts/forecastfont.ttf");
+        if (activity != null) {
+            weatherFont = Typeface.createFromAsset(activity.getAssets(), "fonts/forecastfont.ttf");
+        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View infoView = inflater.inflate(R.layout.fragment_weather_info, container, false);
         ButterKnife.bind(this, infoView);
 //        weatherIcon.setTypeface(weatherFont);
@@ -67,11 +65,11 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     private void updateWeatherData(final int cityID) {
-        api = WeatherDataLoaderAPI.getClient().create(WeatherDataLoaderAPI.WeatherAPI.class);
+        WeatherDataLoaderAPI.WeatherAPI api = WeatherDataLoaderAPI.getClient().create(WeatherDataLoaderAPI.WeatherAPI.class);
         Call<WeatherMap> callWeather = api.getWeather(cityID, WeatherDataLoaderAPI.getUNITS(), WeatherDataLoaderAPI.getOpenWeatherMapApiId());
         callWeather.enqueue(new Callback<WeatherMap>() {
             @Override
-            public void onResponse(Call<WeatherMap> call, Response<WeatherMap> response) {
+            public void onResponse(@NonNull Call<WeatherMap> call, @NonNull Response<WeatherMap> response) {
                 if (response.isSuccessful()) {
                     WeatherMap weatherMap = response.body();
                     Log.d(WIF_TAG, "onResponse: " + response.toString());
@@ -82,7 +80,7 @@ public class WeatherInfoFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<WeatherMap> call, Throwable t) {
+            public void onFailure(@NonNull Call<WeatherMap> call, @NonNull Throwable t) {
                 Log.e(WIF_TAG, "onFailure: " + t.toString());
             }
         });
@@ -92,17 +90,15 @@ public class WeatherInfoFragment extends Fragment {
         try {
             cityName = map.getName().toUpperCase(Locale.US);
             cityText.setText(cityName);
-            weatherTemp = map.getMainTemp() + " °C";
+            String weatherTemp = map.getMainTemp() + " °C";
             tempText.setText(weatherTemp);
             weatherInfo = map.getWeatherDescription().toUpperCase(Locale.US);
             weatherInfoText.setText(weatherInfo);
-            weatherDetails = "Humidity: " + map.getMainHumidity() + "%" + "\n"
+            String weatherDetails = "Humidity: " + map.getMainHumidity() + "%" + "\n"
                     + "Pressure: " + map.getMainPressure() + " hPa" + "\n"
                     + "Wind: " + map.getWindSpeed() + " mps";
             weatherDetailsText.setText(weatherDetails);
             Glide.with(activity).load(map.getIconUrl()).into(weatherImageIcon);
-
-
 //            DateFormat df = DateFormat.getDateTimeInstance();
 //            setWeatherIcon( map.getWeatherId(), map.getSysSunrise() * 1000, map.getSysSunset() * 1000);
         } catch (Exception e) {
@@ -154,9 +150,7 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     public String getWeatherInfo() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(cityName).append("\n").append(weatherInfo);
-        return sb.toString();
+        return cityName + "\n" + weatherInfo;
     }
 
     @Override

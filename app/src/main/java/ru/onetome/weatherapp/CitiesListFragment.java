@@ -17,14 +17,11 @@ import java.util.List;
 public class CitiesListFragment extends Fragment {
 
     private MainActivity activity;
-
-    //    private CitiesListListener citiesListListener;
     private List<WeatherMap> cities;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        citiesListListener = (CitiesListListener) context;
     }
 
     @Override
@@ -47,13 +44,11 @@ public class CitiesListFragment extends Fragment {
         return listView;
     }
 
-
     private class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView categoryNameTextView;
         private TextView categoryTempTextView;
         private TextView categoryDescriptionTextView;
-
 
         MyViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.category_list_item, parent, false));
@@ -74,9 +69,8 @@ public class CitiesListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            activity.setCity(cities.get(this.getLayoutPosition()).getName());
+            activity.setCityID(cities.get(this.getLayoutPosition()).getId());
             activity.setWeatherInfoFragment();
-//            showWeatherInfoFragment(this.getLayoutPosition());
         }
     }
 
@@ -98,10 +92,4 @@ public class CitiesListFragment extends Fragment {
             return cities.size();
         }
     }
-
-//    private void showWeatherInfoFragment(int categoryId) {
-//        citiesListListener.onListItemClick(categoryId);
-//    }
-
-
 }

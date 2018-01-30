@@ -10,6 +10,7 @@
     <string name="details">Details:</string>
     <string name="open_weather_maps_api_id">192d773d7b8e762a18b8960246199be5</string>
     <string name="find_city">Find city</string>
+    <string name="select_country">Select country</string>
     <string name="last_cities">Last cities</string>
     <string name="place_not_found">Place not found</string>
     <string name="share">Share</string>
@@ -31,5 +32,7 @@
     <string name="about">About</string>
     <string name="temp_text">Съешь же ещё этих мягких французских булок, да выпей чаю.</string>
     <string name="about_developer">About developer</string>
+    <string name="city">CITY:</string>
+    <string name="country">COUNTRY</string>
 
 </resources>

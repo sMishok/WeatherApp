@@ -21,7 +21,6 @@ public class DataBaseManager extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     private static final String DBMANAGER_TAG = "logDB";
     private final MainActivity activity;
-//    private List<WeatherMap> maps;
 
     public DataBaseManager(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -56,18 +55,10 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
     }
 
     public void insertLastCity(WeatherMap map) {
         new InsertLastCity().execute(map);
-//        try {
-//            ContentValues cityValues = new ContentValues();
-//            cityValues.put("CITY", city);
-//            db.insertOrThrow("LAST_CITIES", null, cityValues);
-//        } catch (SQLiteException e) {
-//            Log.i(DBMANAGER_TAG, city + " registered in the database");
-//        }
     }
 
     public void insertCities(City[] cities) {
@@ -76,35 +67,24 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     public List<WeatherMap> getLastCities() {
         return new LoadLastCities(activity).loadInBackground();
-//        try {
-//            SQLiteDatabase db = getReadableDatabase();
-//            Cursor cursor = db.query("LAST_CITIES", new String[]{"_id", "CITY", "CITY_ID", "CITY_TEMP", "CITY_WEATHER"},
-//                    null, null, null, null, null);
-//            maps = new ArrayList<>();
-//            while (cursor.moveToNext()) {
-//                String cityName = cursor.getString(1);
-//                Integer cityID = cursor.getInt(2);
-//                Float cityTemp = cursor.getFloat(3);
-//                String cityWeather = cursor.getString(4);
-//                WeatherMap map = new WeatherMap(cityName, cityID, cityTemp, cityWeather);
-//                maps.add(0, map);
-//            }
-//            db.close();
-//            cursor.close();
-//        } catch (SQLiteException e) {
-//            Log.i(DBMANAGER_TAG, "Database unavailuble");
-//        }
-//        return maps;
     }
 
-//    public List<City> getCityID(String city) {
-//        return new LoadCityID(activity, city).loadInBackground();
-//    }
 
-    public int getCityID(String city) {
-        List<City> cities = new LoadCityID(activity, city).loadInBackground();
-        int cityID = cities.get(0).getCityID();
-        return cityID;
+    public List<City> getCityID(String city) {
+        return new LoadCityID(activity, city).loadInBackground();
+    }
+
+    public boolean citiesTableFilled() {
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            Cursor cursor = db.query("CITIES", null, null, null, null, null, null);
+            int citiesCount = cursor.getCount();
+            cursor.close();
+            return citiesCount > 209000;
+        } catch (SQLiteException e) {
+            Log.i(DBMANAGER_TAG, "GetRowCountException: " + e.toString());
+            return false;
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -122,7 +102,6 @@ public class DataBaseManager extends SQLiteOpenHelper {
             try {
                 for (int i = 0; i < cities.length; i++) {
                     String cityName = cities[i].getCityName().toUpperCase();
-//                    cityValues.put("CITY_NAME", cities[i].getCityName().toUpperCase());
                     cityValues.put("CITY_NAME", cityName);
                     cityValues.put("CITY_ID", cities[i].getCityID());
                     cityValues.put("CITY_COUNTRY", cities[i].getCityCountry());
@@ -179,10 +158,12 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            Log.i(DBMANAGER_TAG, "Last_City inserted");
+            if (success)
+                Log.i(DBMANAGER_TAG, "Last_City inserted");
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class LoadLastCities extends AsyncTaskLoader {
 
         SQLiteDatabase db;
@@ -213,6 +194,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class LoadCityID extends AsyncTaskLoader {
 
         SQLiteDatabase db;
@@ -228,7 +210,6 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
         @Override
         public List<City> loadInBackground() {
-
             Cursor cursor = db.query("CITIES", new String[]{"_id", "CITY_NAME", "CITY_ID", "CITY_COUNTRY"},
                     "CITY_NAME = ?", new String[]{cityName}, null, null, null);
             while (cursor.moveToNext()) {

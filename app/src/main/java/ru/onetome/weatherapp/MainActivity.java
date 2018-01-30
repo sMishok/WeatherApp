@@ -1,7 +1,6 @@
 package ru.onetome.weatherapp;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,9 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import java.util.List;
-
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -31,13 +30,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String KEY_CITY_CHOICE = "key_city_choice";
     private static final String INFO_FRAGMENT_TAG = "weather_details_fragment";
     private static final String FIND_CITY_FRAGMENT_TAG = "find_city_fragment";
-    //    private static final String ICONNAME = "icon.png";
     public StorageManager storageManager;
     public DataBaseManager dbManager;
-    public SQLiteDatabase database;
     private String cityName;
     private int cityID;
-//    private ImageView headerImage;
 
     public List<WeatherMap> getLastCities() {
         return dbManager.getLastCities();
@@ -45,18 +41,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void setCity(String city) {
         cityName = city;
-        cityID = dbManager.getCityID(city);
         Log.i(TAG, "city: " + city);
+        List<City> cities = dbManager.getCityID(city);
+        if (cities.size() == 0) {
+            Toast.makeText(this, "City not found", Toast.LENGTH_LONG).show();
+        } else if (cities.size() > 1) {
+            showInputCountryDialog(cities);
+        } else {
+            cityID = cities.get(0).getCityID();
+            setWeatherInfoFragment();
+        }
+    }
+
+    public void setCityID(int cityID) {
+        this.cityID = cityID;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dbManager = new DataBaseManager(this);
         storageManager = new StorageManager(MainActivity.this);
         storageManager.getCitiesList();
-        dbManager = new DataBaseManager(this);
-//        database = dbManager.getWritableDatabase();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -71,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showInputDialog();
+                showInputCityDialog();
             }
         });
         View headerLayout = navigationView.getHeaderView(0);
@@ -113,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.find_city_drawer:
-                showInputDialog();
+                showInputCityDialog();
                 return true;
             case R.id.last_cities_drawer:
                 showLastCities();
@@ -134,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.find_city_drawer:
-                showInputDialog();
+                showInputCityDialog();
                 drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
@@ -167,10 +174,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private void showInputDialog() {
+    private void showInputCityDialog() {
         FindCityDialogFragment findCityFragment = new FindCityDialogFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         findCityFragment.show(transaction, FIND_CITY_FRAGMENT_TAG);
+    }
+
+    private void showInputCountryDialog(List<City> cities) {
+        SelectCountryDialogFragment selectCountryFragment = new SelectCountryDialogFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        selectCountryFragment.setCountries(cities);
+        selectCountryFragment.show(transaction, FIND_CITY_FRAGMENT_TAG);
     }
 
     public void setWeatherInfoFragment() {
@@ -214,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.find_city_drawer:
-                        showInputDialog();
+                        showInputCityDialog();
                         return true;
                     case R.id.last_cities_drawer:
                         showLastCities();
