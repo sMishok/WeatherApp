@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#0d23e7</color>
-    <color name="colorBackground">#81d3f9</color>
-    <color name="colorFButtonBackground">#000000</color>
+
+    <color name="colorPrimaryLight">#B3E5FC</color>
+    <color name="colorPrimary">#03A9F4</color>
+    <color name="colorPrimaryDark">#0288D1</color>
+    <color name="colorAccent">#FF5252</color>
+    <color name="colorBackground">#ffffff</color>
+    <color name="colorFButtonBackground">#FF5252</color>
     <color name="colorDrawerHeader">#ffffff</color>
+    <color name="colorListFragment">#ffffff</color>
 
 </resources>

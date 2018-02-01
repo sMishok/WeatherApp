@@ -48,6 +48,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/standart_margin"
         app:backgroundTint="@color/colorFButtonBackground"
-        app:srcCompat="@drawable/ic_city" />
+        app:srcCompat="@drawable/ic_send" />
 
 </android.support.design.widget.CoordinatorLayout>

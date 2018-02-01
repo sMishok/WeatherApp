@@ -46,25 +46,29 @@ public class CitiesListFragment extends Fragment {
 
     private class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView categoryNameTextView;
-        private TextView categoryTempTextView;
-        private TextView categoryDescriptionTextView;
+        private TextView cityNameTextView;
+        private TextView countryNameTextView;
+        private TextView weatherTempTextView;
+        private TextView weatherDescriptionTextView;
 
         MyViewHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.category_list_item, parent, false));
+            super(inflater.inflate(R.layout.city_list_item, parent, false));
             itemView.setOnClickListener(this);
-            categoryNameTextView = itemView.findViewById(R.id.category_name_text_view);
-            categoryTempTextView = itemView.findViewById(R.id.category_temp_text_view);
-            categoryDescriptionTextView = itemView.findViewById(R.id.category_description_text_view);
+            cityNameTextView = itemView.findViewById(R.id.city_name_text_view);
+            countryNameTextView = itemView.findViewById(R.id.country_name_text_view);
+            weatherTempTextView = itemView.findViewById(R.id.temp_temp_text_view);
+            weatherDescriptionTextView = itemView.findViewById(R.id.weather_description_text_view);
         }
 
         void bind(int position) {
-            String category = cities.get(position).getName();
-            String temp = cities.get(position).getMainTemp().toString();
+            String cityName = cities.get(position).getName() + ", ";
+            String countryName = cities.get(position).getSysCountry();
+            String temp = cities.get(position).getMainTemp().toString() + " °C, ";
             String description = cities.get(position).getWeatherDescription();
-            categoryNameTextView.setText(category);
-            categoryTempTextView.setText(temp);
-            categoryDescriptionTextView.setText(description);
+            cityNameTextView.setText(cityName);
+            countryNameTextView.setText(countryName);
+            weatherTempTextView.setText(temp);
+            weatherDescriptionTextView.setText(description);
         }
 
         @Override

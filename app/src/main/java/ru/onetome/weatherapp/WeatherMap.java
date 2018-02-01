@@ -32,10 +32,11 @@ public class WeatherMap {
     @SerializedName("cod")
     String cod;
 
-    public WeatherMap(String name, int id, float temp, String description) {
-        this.name = name;
+    public WeatherMap(String cityName, int id, String countryName, float temp, String description) {
+        this.name = cityName;
         this.id = id;
         main = new MainElement(temp);
+        sys = new SysElement(countryName);
         weather = new ArrayList<>();
         weather.add(new WeatherElement(description));
     }
@@ -215,6 +216,10 @@ public class WeatherMap {
         Integer sunrise;
         @SerializedName("sunset")
         Integer sunset;
+
+        public SysElement(String country) {
+            this.country = country;
+        }
     }
 }
 

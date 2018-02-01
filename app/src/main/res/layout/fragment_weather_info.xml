@@ -1,68 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/category_item"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/standart_top_margin"
+    card_view:cardCornerRadius="5dp"
+    card_view:cardElevation="2dp"
     tools:context="ru.onetome.weatherapp.WeatherInfoFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/standart_top_margin"
-        android:text="@string/label"
-        android:textAppearance="?android:textAppearanceLarge" />
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-    <!--<TextView-->
-    <!--android:id="@+id/weather_icon"-->
-    <!--style="@style/IconStyle"-->
-    <!--android:layout_width="wrap_content" />-->
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="@dimen/standart_top_margin"-->
+        <!--android:text="@string/label"-->
+        <!--android:textAppearance="?android:textAppearanceLarge" />-->
 
-    <TextView
-        android:id="@+id/city"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/standart_top_margin"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:textColor="#000000" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/weather_image_icon"
-            android:layout_width="@dimen/icon_size"
-            android:layout_height="@dimen/icon_size"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/standart_margin"
-            android:layout_marginRight="@dimen/standart_margin" />
+        <!--<TextView-->
+        <!--android:id="@+id/weather_icon"-->
+        <!--style="@style/IconStyle"-->
+        <!--android:layout_width="wrap_content" />-->
 
         <TextView
-            android:id="@+id/weather_temp"
+            android:id="@+id/city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_margin="@dimen/standart_margin"
             android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="#000000" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/weather_image_icon"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/standart_margin"
+                android:layout_marginRight="@dimen/standart_margin" />
+
+            <TextView
+                android:id="@+id/weather_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textAppearance="?android:textAppearanceLarge"
+                tools:text="Some text" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/weather_info_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/standart_margin"
+            android:textAppearance="?android:textAppearanceMedium"
+            tools:text="Some text" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/weather_details_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standart_margin"
+            android:gravity="center_horizontal"
+            android:textAppearance="?android:textAppearanceMedium"
             tools:text="Some text" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/weather_info_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:textAppearanceMedium"
-        tools:text="Some text" />
-
-    <TextView
-        android:id="@+id/weather_details_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:textAppearance="?android:textAppearanceMedium"
-        tools:text="Some text" />
-
-</LinearLayout>
+</android.support.v7.widget.CardView>

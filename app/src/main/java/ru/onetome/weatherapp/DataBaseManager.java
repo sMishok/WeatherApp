@@ -44,6 +44,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 + "CITY TEXT, "
                 + "CITY_ID INTEGER  UNIQUE, "
                 + "CITY_ICON TEXT, "
+                + "CITY_COUNTRY TEXT, "
                 + "CITY_TEMP REAL, "
                 + "CITY_WEATHER TEXT, "
                 + "CITY_HUMIDITY INTEGER , "
@@ -151,6 +152,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                     cityValues.put("CITY", city.getName());
                     cityValues.put("CITY_ID", city.getId());
                     cityValues.put("CITY_ICON", city.getWeatherIcon());
+                    cityValues.put("CITY_COUNTRY", city.getSysCountry());
                     cityValues.put("CITY_TEMP", city.getMainTemp());
                     cityValues.put("CITY_WEATHER", city.getWeatherDescription());
                     cityValues.put("CITY_HUMIDITY", city.getMainHumidity());
@@ -201,14 +203,15 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
         @Override
         public List<WeatherMap> loadInBackground() {
-            Cursor cursor = db.query("LAST_CITIES", new String[]{"_id", "CITY", "CITY_ID", "CITY_TEMP", "CITY_WEATHER"},
+            Cursor cursor = db.query("LAST_CITIES", new String[]{"_id", "CITY", "CITY_ID", "CITY_COUNTRY", "CITY_TEMP", "CITY_WEATHER"},
                     null, null, null, null, null);
             while (cursor.moveToNext()) {
                 String cityName = cursor.getString(1);
                 Integer cityID = cursor.getInt(2);
-                Float cityTemp = cursor.getFloat(3);
-                String cityWeather = cursor.getString(4);
-                WeatherMap map = new WeatherMap(cityName, cityID, cityTemp, cityWeather);
+                String countryName = cursor.getString(3);
+                Float cityTemp = cursor.getFloat(4);
+                String cityWeather = cursor.getString(5);
+                WeatherMap map = new WeatherMap(cityName, cityID, countryName, cityTemp, cityWeather);
                 maps.add(0, map);
             }
             db.close();

@@ -40,6 +40,7 @@ public class WeatherInfoFragment extends Fragment {
     TextView weatherDetailsText;
     private MainActivity activity;
     private Typeface weatherFont;
+    private String weatherTemp;
     private String weatherInfo;
     private String cityName;
     private String icon;
@@ -88,14 +89,14 @@ public class WeatherInfoFragment extends Fragment {
 
     public void renderWeather(WeatherMap map) {
         try {
-            cityName = map.getName().toUpperCase(Locale.US);
+            cityName = map.getName().toUpperCase(Locale.US) + ", " + map.getSysCountry();
             cityText.setText(cityName);
-            String weatherTemp = map.getMainTemp() + " °C";
+            weatherTemp = map.getMainTemp() + " °C";
             tempText.setText(weatherTemp);
             weatherInfo = map.getWeatherDescription().toUpperCase(Locale.US);
             weatherInfoText.setText(weatherInfo);
-            String weatherDetails = "Humidity: " + map.getMainHumidity() + "%" + "\n"
-                    + "Pressure: " + map.getMainPressure() + " hPa" + "\n"
+            String weatherDetails = "Humidity: " + map.getMainHumidity() + "%" + "\n\n"
+                    + "Pressure: " + map.getMainPressure() + " hPa" + "\n\n"
                     + "Wind: " + map.getWindSpeed() + " mps";
             weatherDetailsText.setText(weatherDetails);
             Glide.with(activity).load(map.getIconUrl()).into(weatherImageIcon);
@@ -150,7 +151,7 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     public String getWeatherInfo() {
-        return cityName + "\n" + weatherInfo;
+        return cityName + "\n" + weatherTemp + ", " + weatherInfo;
     }
 
     @Override
