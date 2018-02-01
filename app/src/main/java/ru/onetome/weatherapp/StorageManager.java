@@ -74,7 +74,7 @@ public class StorageManager {
                     StringBuilder sb = new StringBuilder(1024);
                     String tempData;
                     while ((tempData = reader.readLine()) != null) {
-                        sb.append(tempData).append("\n");
+                        sb.append(tempData);
                     }
                     reader.close();
                     is.close();
