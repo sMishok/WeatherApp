@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/standart_margin"
+    android:paddingLeft="@dimen/standart_margin"
+    android:paddingRight="@dimen/standart_margin"
+    android:paddingTop="@dimen/standart_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="ru.onetome.weatherapp.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+    <!--<Button-->
+    <!--style="@style/ButtonStyle"-->
+    <!--android:text="@string/open_popup"-->
+    <!--android:id="@+id/popup_button"-->
+    <!--android:onClick="showPopup"/>-->
+
+    <!--<FrameLayout-->
+    <!--android:id="@+id/fragment_container"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"/>-->
+
+</LinearLayout>
