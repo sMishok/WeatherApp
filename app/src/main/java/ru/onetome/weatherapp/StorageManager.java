@@ -1,17 +1,13 @@
 package ru.onetome.weatherapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
 import android.util.Log;
-
-import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -21,10 +17,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class StorageManager {
+    public static final String INTENT_KEY = "intent_key";
     private static final String STORAGE_NAME = "StorageName";
     private static final String ICONNAME = "icon.png";
     private static final String KEY = "key";
@@ -67,27 +62,46 @@ public class StorageManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (activity.dbManager.citiesTableFilled()) return;
                 try {
+                    if (activity.dbManager.citiesTableFilled()) return;
                     InputStream is = activity.getAssets().open("cities_list/city.list.json");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                     StringBuilder sb = new StringBuilder(1024);
                     String tempData;
+//                    Intent fillCitiesIntentService = new Intent(activity, FillCitiesIntentService.class);
                     while ((tempData = reader.readLine()) != null) {
-                        sb.append(tempData);
+                        if (tempData.equals("[")) {
+                            continue;
+                        } else if (tempData.contains("{")) {
+                            sb.append(tempData);
+                        } else if (tempData.contains("},")) {
+                            sb.append(tempData.replace("},", "}"));
+                            Intent fillCitiesIntentService = new Intent(activity, FillCitiesIntentService.class);
+                            fillCitiesIntentService.putExtra(INTENT_KEY, sb.toString());
+                            activity.startService(fillCitiesIntentService);
+                            sb.setLength(0);
+                            sb.trimToSize();
+                        } else if (tempData.contains("]")) {
+                            Intent fillCitiesIntentService = new Intent(activity, FillCitiesIntentService.class);
+                            fillCitiesIntentService.putExtra(INTENT_KEY, sb.toString());
+                            sb.setLength(0);
+                            sb.trimToSize();
+                        } else {
+                            sb.append(tempData);
+                        }
                     }
                     reader.close();
                     is.close();
-                    JSONArray jsonArray = new JSONArray(sb.toString());
-                    List<City> citiesList = new ArrayList<>();
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject json = jsonArray.getJSONObject(i);
-                        City city = new Gson().fromJson(json.toString(), City.class);
-                        citiesList.add(city);
-                    }
-                    City[] cities = citiesList.toArray(new City[citiesList.size()]);
-                    activity.dbManager.insertCities(cities);
-                    Log.i(TAG, "Cities" + cities.length);
+//                    JSONArray jsonArray = new JSONArray(sb.toString());
+//                    List<City> citiesList = new ArrayList<>();
+//                    for (int i = 0; i < jsonArray.length(); i++) {
+//                        JSONObject json = jsonArray.getJSONObject(i);
+//                        City city = new Gson().fromJson(json.toString(), City.class);
+//                        citiesList.add(city);
+//                    }
+//                    City[] cities = citiesList.toArray(new City[citiesList.size()]);
+//                    activity.dbManager.insertCities(cities);
+//                    Log.i(TAG, "Cities" + cities.length);
                 } catch (Exception e) {
                     Log.i(TAG, "City.list.json read problem" + e.toString());
                 }

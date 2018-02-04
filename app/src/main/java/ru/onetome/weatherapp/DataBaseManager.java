@@ -19,18 +19,18 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "weatherDB";
     private static final int DB_VERSION = 1;
-    private static final String DBMANAGER_TAG = "logDB";
-    private final MainActivity activity;
+    private static final String TAG = "logDB";
+    private final Context context;
 
     public DataBaseManager(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-        activity = (MainActivity) context;
-        Log.i(DBMANAGER_TAG, "DBManager created");
+        this.context = context;
+        Log.i(TAG, "DBManager created");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.i(DBMANAGER_TAG, "DBManager OnCreate started");
+        Log.i(TAG, "DBManager OnCreate started");
         db.execSQL("CREATE TABLE CITIES (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "CITY_NAME TEXT, "
                 + "CITY_ID INTEGER  UNIQUE, "
@@ -38,7 +38,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 + "CITY_LON REAL, "
                 + "CITY_LAT REAL);");
 
-        Log.i(DBMANAGER_TAG, "Cities table created");
+        Log.i(TAG, "Cities table created");
 
         db.execSQL("CREATE TABLE LAST_CITIES (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "CITY TEXT, "
@@ -51,7 +51,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 + "CITY_PRESSURE REAL, "
                 + "CITY_WIND REAL);");
 
-        Log.i(DBMANAGER_TAG, "Last Cities table created");
+        Log.i(TAG, "Last Cities table created");
     }
 
     @Override
@@ -62,16 +62,16 @@ public class DataBaseManager extends SQLiteOpenHelper {
         new InsertLastCity().execute(map);
     }
 
-    public void insertCities(City[] cities) {
-        new InsertCities().execute(cities);
-    }
+//    public void insertCities(City[] cities) {
+//        new InsertCities().execute(cities);
+//    }
 
     public List<WeatherMap> getLastCities() {
-        return new LoadLastCities(activity).loadInBackground();
+        return new LoadLastCities(context).loadInBackground();
     }
 
     public List<City> getCityID(String city) {
-        return new LoadCityID(activity, city).loadInBackground();
+        return new LoadCityID(context, city).loadInBackground();
     }
 
     public boolean citiesTableFilled() {
@@ -79,11 +79,14 @@ public class DataBaseManager extends SQLiteOpenHelper {
         try {
             Cursor cursor = db.query("CITIES", null, null, null, null, null, null);
             int citiesCount = cursor.getCount();
-            Log.i(DBMANAGER_TAG, "Cities table filled with: " + citiesCount);
+            Log.i(TAG, "Cities table filled with: " + citiesCount);
             cursor.close();
-            return citiesCount > 209000;
+            boolean isFilled = citiesCount > 209000;
+            MainActivity activity = (MainActivity) context;
+            activity.setFilled(isFilled);
+            return isFilled;
         } catch (SQLiteException e) {
-            Log.i(DBMANAGER_TAG, "GetRowCountException: " + e.toString());
+            Log.i(TAG, "GetRowCountException: " + e.toString());
             return false;
         }
     }
@@ -109,12 +112,12 @@ public class DataBaseManager extends SQLiteOpenHelper {
                     cityValues.put("CITY_LON", cities[i].getCityLon());
                     cityValues.put("CITY_LAT", cities[i].getCityLat());
                     db.insertOrThrow("CITIES", null, cityValues);
-                    Log.i(DBMANAGER_TAG, "City inserted: " + cityName + " " + cities[i].getCityID());
+                    Log.i(TAG, "City inserted: " + cityName + " " + cities[i].getCityID());
                 }
                 db.close();
                 return true;
             } catch (SQLiteException e) {
-                Log.i(DBMANAGER_TAG, "InsertCitiesException: " + e.toString());
+                Log.i(TAG, "InsertCitiesException: " + e.toString());
                 return false;
             }
         }
@@ -122,7 +125,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
         @Override
         protected void onPostExecute(Boolean success) {
             if (success)
-                Log.i(DBMANAGER_TAG, "Cities inserted");
+                Log.i(TAG, "Cities inserted");
         }
     }
 
@@ -145,7 +148,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 count = cursor.getCount();
                 cursor.close();
             } catch (SQLiteException e) {
-                Log.i(DBMANAGER_TAG, "InsertLastCityException: " + e.toString());
+                Log.i(TAG, "InsertLastCityException: " + e.toString());
             }
             if (count == 0) {
                 try {
@@ -162,7 +165,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                     db.close();
                     return true;
                 } catch (SQLiteException e) {
-                    Log.i(DBMANAGER_TAG, "UpdateLastCityException: " + e.toString());
+                    Log.i(TAG, "UpdateLastCityException: " + e.toString());
                     return false;
                 }
             } else {
@@ -176,7 +179,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                     db.close();
                     return true;
                 } catch (SQLiteException e) {
-                    Log.i(DBMANAGER_TAG, "InsertLastCityException: " + e.toString());
+                    Log.i(TAG, "InsertLastCityException: " + e.toString());
                     return false;
                 }
             }
@@ -185,7 +188,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
         @Override
         protected void onPostExecute(Boolean success) {
             if (success)
-                Log.i(DBMANAGER_TAG, "Last_City inserted");
+                Log.i(TAG, "Last_City inserted");
         }
     }
 

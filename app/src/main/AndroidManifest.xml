@@ -21,9 +21,17 @@
             android:theme="@style/MainTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".FillCitiesIntentService"
+            android:exported="false" />
+        <service
+            android:name=".CheckCitiesIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

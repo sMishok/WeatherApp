@@ -34,6 +34,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public DataBaseManager dbManager;
     private String cityName;
     private int cityID;
+    private boolean isFilled;
+
+    public void setFilled(boolean filled) {
+        isFilled = false;
+    }
 
     public List<WeatherMap> getLastCities() {
         return dbManager.getLastCities();
@@ -42,15 +47,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void setCity(String city) {
         cityName = city;
         Log.i(TAG, "city: " + city);
-        List<City> cities = dbManager.getCityID(city);
-        if (cities.size() == 0) {
-            Toast.makeText(this, "City not found", Toast.LENGTH_LONG).show();
-        } else if (cities.size() > 1) {
-            showInputCountryDialog(cities);
-        } else {
-            cityID = cities.get(0).getCityID();
-            setWeatherInfoFragment();
-        }
+        if (isFilled) {
+            List<City> cities = dbManager.getCityID(city);
+            if (cities.size() == 0) {
+                Toast.makeText(this, "City not found", Toast.LENGTH_LONG).show();
+            } else if (cities.size() > 1) {
+                showInputCountryDialog(cities);
+            } else {
+                cityID = cities.get(0).getCityID();
+                setWeatherInfoFragment();
+            }
+        } else setWeatherInfoFragment();
+
     }
 
     public void setCityID(int cityID) {
@@ -189,10 +197,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void setWeatherInfoFragment() {
-        storageManager.setCity(cityID);
         WeatherInfoFragment infoFragment = (WeatherInfoFragment) getSupportFragmentManager().findFragmentByTag(INFO_FRAGMENT_TAG);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        infoFragment.changeCity(cityID);
+        if (isFilled) {
+            storageManager.setCity(cityID);
+            infoFragment.changeCity(cityID);
+        } else {
+            infoFragment.changeCity(cityName);
+        }
+
         transaction.replace(R.id.fragment_container, infoFragment);
         transaction.addToBackStack(null);
         transaction.commit();

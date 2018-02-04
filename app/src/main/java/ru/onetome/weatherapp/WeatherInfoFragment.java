@@ -87,6 +87,28 @@ public class WeatherInfoFragment extends Fragment {
         });
     }
 
+    private void updateWeatherData(final String cityName) {
+        WeatherDataLoaderAPI.WeatherAPI api = WeatherDataLoaderAPI.getClient().create(WeatherDataLoaderAPI.WeatherAPI.class);
+        Call<WeatherMap> callWeather = api.getWeatherByName(cityName, WeatherDataLoaderAPI.getUNITS(), WeatherDataLoaderAPI.getOpenWeatherMapApiId());
+        callWeather.enqueue(new Callback<WeatherMap>() {
+            @Override
+            public void onResponse(@NonNull Call<WeatherMap> call, @NonNull Response<WeatherMap> response) {
+                if (response.isSuccessful()) {
+                    WeatherMap weatherMap = response.body();
+                    Log.d(WIF_TAG, "onResponse: " + response.toString());
+                    renderWeather(weatherMap);
+                    activity.dbManager.insertLastCity(weatherMap);
+                } else
+                    Log.e(WIF_TAG, "Response is not receive");
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<WeatherMap> call, @NonNull Throwable t) {
+                Log.e(WIF_TAG, "onFailure: " + t.toString());
+            }
+        });
+    }
+
     public void renderWeather(WeatherMap map) {
         try {
             cityName = map.getName().toUpperCase(Locale.US) + ", " + map.getSysCountry();
@@ -146,8 +168,13 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     public void changeCity(int cityID) {
-        Log.i(WIF_TAG, "changeCity: " + cityID);
+        Log.i(WIF_TAG, "changeCity (ID): " + cityID);
         updateWeatherData(cityID);
+    }
+
+    public void changeCity(String cityName) {
+        Log.i(WIF_TAG, "changeCity (Name): " + cityName);
+        updateWeatherData(cityName);
     }
 
     public String getWeatherInfo() {
