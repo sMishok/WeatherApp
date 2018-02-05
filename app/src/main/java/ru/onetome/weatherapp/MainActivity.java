@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean isFilled;
 
     public void setFilled(boolean filled) {
-        isFilled = false;
+        isFilled = filled;
     }
 
     public List<WeatherMap> getLastCities() {
@@ -203,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             storageManager.setCity(cityID);
             infoFragment.changeCity(cityID);
         } else {
+            dbManager.citiesTableFilled();
             infoFragment.changeCity(cityName);
         }
 

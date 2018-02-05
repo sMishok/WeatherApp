@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class StorageManager {
     public static final String INTENT_KEY = "intent_key";
@@ -67,8 +68,8 @@ public class StorageManager {
                     InputStream is = activity.getAssets().open("cities_list/city.list.json");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                     StringBuilder sb = new StringBuilder(1024);
+                    ArrayList<String> stringList = new ArrayList<>();
                     String tempData;
-//                    Intent fillCitiesIntentService = new Intent(activity, FillCitiesIntentService.class);
                     while ((tempData = reader.readLine()) != null) {
                         if (tempData.equals("[")) {
                             continue;
@@ -76,14 +77,20 @@ public class StorageManager {
                             sb.append(tempData);
                         } else if (tempData.contains("},")) {
                             sb.append(tempData.replace("},", "}"));
-                            Intent fillCitiesIntentService = new Intent(activity, FillCitiesIntentService.class);
-                            fillCitiesIntentService.putExtra(INTENT_KEY, sb.toString());
-                            activity.startService(fillCitiesIntentService);
+                            stringList.add(sb.toString());
+                            if (stringList.size() == 100) {
+                                Intent fillCitiesIntentService = new Intent(activity, FillCitiesIntentService.class);
+                                fillCitiesIntentService.putExtra(INTENT_KEY, stringList);
+                                activity.startService(fillCitiesIntentService);
+                                stringList.clear();
+                            }
                             sb.setLength(0);
                             sb.trimToSize();
                         } else if (tempData.contains("]")) {
                             Intent fillCitiesIntentService = new Intent(activity, FillCitiesIntentService.class);
-                            fillCitiesIntentService.putExtra(INTENT_KEY, sb.toString());
+                            stringList.add(sb.toString());
+                            fillCitiesIntentService.putExtra(INTENT_KEY, stringList);
+                            activity.startService(fillCitiesIntentService);
                             sb.setLength(0);
                             sb.trimToSize();
                         } else {
@@ -92,16 +99,6 @@ public class StorageManager {
                     }
                     reader.close();
                     is.close();
-//                    JSONArray jsonArray = new JSONArray(sb.toString());
-//                    List<City> citiesList = new ArrayList<>();
-//                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        JSONObject json = jsonArray.getJSONObject(i);
-//                        City city = new Gson().fromJson(json.toString(), City.class);
-//                        citiesList.add(city);
-//                    }
-//                    City[] cities = citiesList.toArray(new City[citiesList.size()]);
-//                    activity.dbManager.insertCities(cities);
-//                    Log.i(TAG, "Cities" + cities.length);
                 } catch (Exception e) {
                     Log.i(TAG, "City.list.json read problem" + e.toString());
                 }

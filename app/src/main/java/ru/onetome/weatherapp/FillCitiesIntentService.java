@@ -1,19 +1,22 @@
 package ru.onetome.weatherapp;
 
 import android.app.IntentService;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+
 public class FillCitiesIntentService extends IntentService {
 
     private final String TAG = "FillCitiesIntentService";
     private SQLiteDatabase db;
+    private DataBaseManager dbManager;
+
+//    private  ContentValues cityValues;
 
     public FillCitiesIntentService() {
         super("FillCitiesIntentService");
@@ -22,32 +25,36 @@ public class FillCitiesIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            String cityJson = intent.getStringExtra(StorageManager.INTENT_KEY);
-            City city = new Gson().fromJson(cityJson, City.class);
-            insertCity(city);
+            City city;
+            ArrayList<String> cityJson = intent.getStringArrayListExtra(StorageManager.INTENT_KEY);
+            StringBuilder builder = new StringBuilder();
+            Long aLong = System.currentTimeMillis();
+            builder.append("INSERT INTO CITIES (");
+            builder.append("CITY_NAME").append(",");
+            builder.append("CITY_ID").append(",");
+            builder.append("CITY_COUNTRY").append(",");
+            builder.append("CITY_LON").append(",");
+            builder.append("CITY_LAT");
+            builder.append(") VALUES ");
+            for (String s : cityJson) {
+                city = new Gson().fromJson(s, City.class);
+                builder.append('(');
+                builder.append('"').append(city.getCityName().toUpperCase()).append("\",");
+                builder.append('"').append(city.getCityID()).append("\",");
+                builder.append('"').append(city.getCityCountry()).append("\",");
+                builder.append('"').append(city.getCityLon()).append("\",");
+                builder.append('"').append(city.getCityLat()).append("\"");
+                builder.append(')').append(',');
+            }
+            builder.deleteCharAt(builder.length() - 1);
+            Log.i(TAG, builder.toString());
+            db.execSQL(builder.toString());
+//            db.rawQuery(builder.toString(), null);
+            dbManager.citiesTableFilledTest();
 
-//            cities[index++] = city;
-//            if (index == cities.length){
-//                insertCities(cities);
-//                index = 0;
-//                cities = new City[10];
-//            }
-        }
-    }
 
-    private void insertCity(City city) {
-        ContentValues cityValues = new ContentValues();
-        try {
-            String cityName = city.getCityName().toUpperCase();
-            cityValues.put("CITY_NAME", cityName);
-            cityValues.put("CITY_ID", city.getCityID());
-            cityValues.put("CITY_COUNTRY", city.getCityCountry());
-            cityValues.put("CITY_LON", city.getCityLon());
-            cityValues.put("CITY_LAT", city.getCityLat());
-            db.insertOrThrow("CITIES", null, cityValues);
-            Log.i(TAG, "City inserted: " + cityName + " " + city.getCityID());
-        } catch (SQLiteException e) {
-            Log.i(TAG, "InsertCitiesException: " + e.toString());
+            aLong = System.currentTimeMillis() - aLong;
+            Log.e(TAG, "onHandleIntent: " + aLong);
         }
     }
 
@@ -55,7 +62,9 @@ public class FillCitiesIntentService extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w(TAG, "onStartCommand");
         if (db == null) {
-            db = new DataBaseManager(this).getWritableDatabase();
+            dbManager = new DataBaseManager(this);
+            db = dbManager.getWritableDatabase();
+            db.execSQL("DELETE FROM CITIES");
         }
         return super.onStartCommand(intent, flags, startId);
     }

@@ -74,6 +74,21 @@ public class DataBaseManager extends SQLiteOpenHelper {
         return new LoadCityID(context, city).loadInBackground();
     }
 
+    public boolean citiesTableFilledTest() {
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            Cursor cursor = db.query("CITIES", null, null, null, null, null, null);
+            int citiesCount = cursor.getCount();
+            Log.i(TAG, "Cities table filled with: " + citiesCount);
+            cursor.close();
+            boolean isFilled = citiesCount > 209000;
+            return isFilled;
+        } catch (SQLiteException e) {
+            Log.i(TAG, "GetRowCountException: " + e.toString());
+            return false;
+        }
+    }
+
     public boolean citiesTableFilled() {
         SQLiteDatabase db = getReadableDatabase();
         try {
