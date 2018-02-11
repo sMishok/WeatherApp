@@ -11,12 +11,10 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 public class FillCitiesIntentService extends IntentService {
-
+    public static final String INTENT_KEY = "intent_key";
     private final String TAG = "FillCitiesIntentService";
     private SQLiteDatabase db;
     private DataBaseManager dbManager;
-
-//    private  ContentValues cityValues;
 
     public FillCitiesIntentService() {
         super("FillCitiesIntentService");
@@ -26,7 +24,7 @@ public class FillCitiesIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             City city;
-            ArrayList<String> cityJson = intent.getStringArrayListExtra(StorageManager.INTENT_KEY);
+            ArrayList<String> cityJson = intent.getStringArrayListExtra(INTENT_KEY);
             StringBuilder builder = new StringBuilder();
             Long aLong = System.currentTimeMillis();
             builder.append("INSERT INTO CITIES (");
@@ -49,10 +47,7 @@ public class FillCitiesIntentService extends IntentService {
             builder.deleteCharAt(builder.length() - 1);
             Log.i(TAG, builder.toString());
             db.execSQL(builder.toString());
-//            db.rawQuery(builder.toString(), null);
             dbManager.citiesTableFilledTest();
-
-
             aLong = System.currentTimeMillis() - aLong;
             Log.e(TAG, "onHandleIntent: " + aLong);
         }

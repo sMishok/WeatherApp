@@ -20,7 +20,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class StorageManager {
-    public static final String INTENT_KEY = "intent_key";
+
     private static final String STORAGE_NAME = "StorageName";
     private static final String ICONNAME = "icon.png";
     private static final String KEY = "key";
@@ -80,7 +80,7 @@ public class StorageManager {
                             stringList.add(sb.toString());
                             if (stringList.size() == 100) {
                                 Intent fillCitiesIntentService = new Intent(activity, FillCitiesIntentService.class);
-                                fillCitiesIntentService.putExtra(INTENT_KEY, stringList);
+                                fillCitiesIntentService.putExtra(FillCitiesIntentService.INTENT_KEY, stringList);
                                 activity.startService(fillCitiesIntentService);
                                 stringList.clear();
                             }
@@ -89,7 +89,7 @@ public class StorageManager {
                         } else if (tempData.contains("]")) {
                             Intent fillCitiesIntentService = new Intent(activity, FillCitiesIntentService.class);
                             stringList.add(sb.toString());
-                            fillCitiesIntentService.putExtra(INTENT_KEY, stringList);
+                            fillCitiesIntentService.putExtra(FillCitiesIntentService.INTENT_KEY, stringList);
                             activity.startService(fillCitiesIntentService);
                             sb.setLength(0);
                             sb.trimToSize();
